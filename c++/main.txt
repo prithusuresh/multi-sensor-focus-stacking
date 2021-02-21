@@ -1,0 +1,55 @@
+#include "blend.h"
+#include <opencv2/opencv.hpp>
+
+
+/**
+
+ Naive image blending by just copying the values from foreground over background
+
+ */
+void naiveBlend(cv::InputArray first_,
+                cv::InputArray second_,
+                cv::InputArray mask_,
+                cv::OutputArray dst_)
+{
+
+    first_.getMat().copyTo(dst_);
+    second_.getMat().copyTo(dst_, (255 - mask_.getMat()));
+}
+
+/**
+
+ Main entry point.
+
+ */
+int main(int argc, char **argv)
+{
+    /*if (argc != 4) {
+        std::cerr << argv[0] << " first second mask" << std::endl;
+        return -1;
+    }*/
+
+    cv::Mat first = cv::imread("bg.jpg");
+    cv::Mat second = cv::imread("fg.jpg");
+    cv::Mat mask = cv::imread("mask.jpg", cv::ImreadModes::IMREAD_GRAYSCALE);
+
+
+    cv::Mat result;
+
+    /*naiveBlend(first, second, mask, result);
+    cv::imshow("Naive Blend", result);
+    cv::imwrite("naive-blend.png", result);*/
+
+
+    blend::seamlessBlend(first, second, mask, result);
+    cv::imshow("Seamless Blend", result);
+    cv::imwrite("seamless-blend.png", result);
+
+    cv::waitKey();
+
+    return 0;
+}
+
+
+
+
